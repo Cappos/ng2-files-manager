@@ -14,6 +14,9 @@ export class AppComponent implements OnInit{
     currentRoot: FileElement;
     currentPath: string;
     canNavigateUp = false;
+    selected :FileElement[];
+    cuted :FileElement[];
+
 
     constructor(private fileService: FileService) {}
 
@@ -83,4 +86,9 @@ export class AppComponent implements OnInit{
         p = split.join('/');
         return p;
     }
+
+    onPaste(ev: any) {
+        console.log(ev);
+    }
+
 }

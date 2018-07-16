@@ -29,10 +29,10 @@
     flex: 1 1 auto;
 }
 
-.bgc-gray {
-    background-color: #eeeeee;
+.bgc-gray mat-icon {
+    color: #7a7a7b;
 }
 
-.bgc-cut {
-    background-color: #666666;
+.bgc-cut mat-icon{
+    color: #eeeeee;
 }

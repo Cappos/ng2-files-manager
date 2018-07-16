@@ -43,6 +43,7 @@ export class FileService {
 
     queryInFolder(folderId: string) {
         const result: FileElement[] = [];
+
         this.map.forEach(element => {
             if (element.parent === folderId) {
                 result.push(this.clone(element));

@@ -21,10 +21,12 @@ export class FileExplorerComponent implements OnInit {
     @Output() elementMoved = new EventEmitter<{ element: FileElement; moveTo: FileElement }>();
     @Output() navigatedDown = new EventEmitter<FileElement>();
     @Output() navigatedUp = new EventEmitter();
+    @Output() select = new EventEmitter();
+    @Output() cut = new EventEmitter();
 
     selection: any = [];
     cuted: any = [];
-    context: any;
+
 
     constructor(public dialog: MatDialog) {
     }
@@ -75,7 +77,6 @@ export class FileExplorerComponent implements OnInit {
     }
 
     onSelect(event: MouseEvent, element: any) {
-
         if (!(event.metaKey || event.ctrlKey)) {
             this.selection = [element];
         }
@@ -87,6 +88,7 @@ export class FileExplorerComponent implements OnInit {
                 this.selection.push(element);
             }
         }
+        this.select.emit({event, element});
     }
 
     isSelected(item) {
@@ -100,16 +102,19 @@ export class FileExplorerComponent implements OnInit {
         return selected;
     }
 
-    onCut() {
-        this.cuted = this.selection.length ? this.selection.map(item => Object.assign({}, item)) : [this.context];
+    onCut(element) {
+        this.cuted = this.selection.length ? this.selection.map(item => Object.assign({}, item)) : element;
         this.selection = [];
-        console.log(this.cuted);
     }
 
     isCut(item: any) {
         const {id, isFolder, parent} = item;
         return this.cuted
             .filter((cutedItem) => cutedItem.id == id && cutedItem.isFolder == isFolder && cutedItem.parent == parent).length;
+    }
+
+    onPaste(){
+        this.cut.emit(this.cuted);
     }
 
 }

@@ -6,28 +6,28 @@
     {{path || 'Files'}}
   </span>
     <span class="spacer"></span>
-    <mat-icon class="pointer" (click)="openNewFolderDialog()">
-        create_new_folder
-    </mat-icon>
+    <button mat-icon-button [matMenuTriggerFor]="containerContext">
+        <mat-icon>more_vert</mat-icon>
+    </button>
 </mat-toolbar>
 
-<div class="container" fxFlex fxLayout="row" fxLayoutAlign="space-between stretch">
+<div class="container" fxFlex fxLayout="row" fxLayoutAlign="space-between stretch" >
 
-    <div class="content" fxFlex fxLayout="row">
+    <div class="content" fxFlex fxLayout="row" >
 
         <mat-grid-list cols="8" rowHeight="100px" fxFlex>
-
             <mat-grid-tile *ngFor="let element of fileElements" class=file-or-folder>
-        <span [matMenuTriggerFor]="rootMenu"
-              [matMenuTriggerData]="{element: element}"
-              #menuTrigger="matMenuTrigger">
-        </span>
+                <span [matMenuTriggerFor]="rootMenu"
+                      [matMenuTriggerData]="{element: element}"
+                      #menuTrigger="matMenuTrigger">
+                </span>
                 <div fxLayout="column"
                      fxLayoutAlign="space-between center"
                      [ngClass]="{ 'bgc-gray': isSelected(element) > -1, 'bgc-cut': isCut(element)}"
                      (dblclick)="navigate(element)"
                      (click)="onSelect($event, element)"
-                     (contextmenu)="openMenu($event, element, menuTrigger)">
+                     (contextmenu)="openMenu($event, element, menuTrigger)"
+                     no-bubbling>
 
                     <mat-icon color="primary"
                               class="file-or-folder-icon pointer"
@@ -47,6 +47,20 @@
     </div>
 </div>
 
+
+
+<mat-menu #containerContext="matMenu" xPosition="after">
+    <button mat-menu-item (click)="openNewFolderDialog()">
+        <mat-icon>folder_open</mat-icon>
+        <span>New Folder</span>
+    </button>
+    <button mat-menu-item [disabled]="!cuted.length" (click)="onPaste()">
+        <mat-icon>content_paste</mat-icon>
+        <span>Paste</span>
+    </button>
+</mat-menu>
+
+
 <mat-menu #rootMenu="matMenu" [overlapTrigger]="false">
     <ng-template matMenuContent let-element="element">
         <button mat-menu-item [matMenuTriggerFor]="moveToMenu" [matMenuTriggerData]="{self: element}">
@@ -54,7 +68,7 @@
             <span>Move To</span>
         </button>
         <button mat-menu-item (click)="onCut(element)">
-            <mat-icon>cut</mat-icon>
+            <mat-icon>content_cut</mat-icon>
             <span>Cut</span>
         </button>
         <button mat-menu-item (click)="openRenameDialog(element)">
