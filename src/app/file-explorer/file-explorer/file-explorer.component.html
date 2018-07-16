@@ -25,7 +25,7 @@
                 <div fxLayout="column"
                      fxLayoutAlign="space-between center"
                      (click)="navigate(element)"
-                     (contextmenu)="openMenu($event, menuTrigger)">
+                     (contextmenu)="openMenu($event, element, menuTrigger)">
 
                     <mat-icon color="primary"
                               class="file-or-folder-icon pointer"
