@@ -5,33 +5,35 @@ import {Observable} from 'rxjs';
 
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit{
+export class AppComponent implements OnInit {
     fileElements: Observable<FileElement[]>;
     currentRoot: FileElement;
     currentPath: string;
+    curenFolder: any;
     canNavigateUp = false;
-    selected :FileElement[];
-    cuted :FileElement[];
+    selected: FileElement[];
+    cuted: FileElement[];
 
 
-    constructor(private fileService: FileService) {}
+    constructor(private fileService: FileService) {
+    }
 
     ngOnInit() {
-        const folderA = this.fileService.add({ name: 'Folder A', isFolder: true, parent: 'root' });
-        this.fileService.add({ name: 'Folder B', isFolder: true, parent: 'root' });
-        this.fileService.add({ name: 'Folder C', isFolder: true, parent: folderA.id });
-        this.fileService.add({ name: 'File A', isFolder: false, parent: 'root' });
-        this.fileService.add({ name: 'File B', isFolder: false, parent: 'root' });
+        const folderA = this.fileService.add({name: 'Folder A', isFolder: true, parent: 'root', oldParent: ''});
+        this.fileService.add({name: 'Folder B', isFolder: true, parent: 'root', oldParent: ''});
+        this.fileService.add({name: 'Folder C', isFolder: true, parent: folderA.id, oldParent: ''});
+        this.fileService.add({name: 'File A', isFolder: false, parent: 'root', oldParent: ''});
+        this.fileService.add({name: 'File B', isFolder: false, parent: 'root', oldParent: ''});
 
         this.updateFileElementQuery();
     }
 
     addFolder(folder: { name: string }) {
-        this.fileService.add({ isFolder: true, name: folder.name, parent: this.currentRoot ? this.currentRoot.id : 'root' });
+        this.fileService.add({isFolder: true, name: folder.name, parent: this.currentRoot ? this.currentRoot.id : 'root', oldParent: ''});
         this.updateFileElementQuery();
     }
 
@@ -41,12 +43,12 @@ export class AppComponent implements OnInit{
     }
 
     moveElement(event: { element: FileElement; moveTo: FileElement }) {
-        this.fileService.update(event.element.id, { parent: event.moveTo.id });
+        this.fileService.update(event.element.id, {parent: event.moveTo.id});
         this.updateFileElementQuery();
     }
 
     renameElement(element: FileElement) {
-        this.fileService.update(element.id, { name: element.name });
+        this.fileService.update(element.id, {name: element.name});
         this.updateFileElementQuery();
     }
 
@@ -57,9 +59,11 @@ export class AppComponent implements OnInit{
     navigateUp() {
         if (this.currentRoot && this.currentRoot.parent === 'root') {
             this.currentRoot = null;
+            this.curenFolder = null;
             this.canNavigateUp = false;
             this.updateFileElementQuery();
         } else {
+            this.curenFolder = this.currentRoot;
             this.currentRoot = this.fileService.get(this.currentRoot.parent);
             this.updateFileElementQuery();
         }
@@ -68,6 +72,7 @@ export class AppComponent implements OnInit{
 
     navigateToFolder(element: FileElement) {
         this.currentRoot = element;
+        this.curenFolder = element;
         this.updateFileElementQuery();
         this.currentPath = this.pushToPath(this.currentPath, element.name);
         this.canNavigateUp = true;
@@ -81,13 +86,14 @@ export class AppComponent implements OnInit{
 
     popFromPath(path: string) {
         let p = path ? path : '';
-        const split = p.split('/');
+        const split = p.split(' / ');
         split.splice(split.length - 2, 1);
-        p = split.join('/');
+        p = split.join(' / ');
         return p;
     }
 
     onPaste(ev: any) {
+        console.log(this.curenFolder);
         console.log(ev);
     }
 

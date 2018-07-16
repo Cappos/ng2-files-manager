@@ -49,6 +49,8 @@ export class FileExplorerComponent implements OnInit {
     }
 
     moveElement(element: FileElement, moveTo: FileElement) {
+        console.log(element);
+        console.log(moveTo);
         this.elementMoved.emit({element: element, moveTo: moveTo});
     }
 
@@ -77,6 +79,7 @@ export class FileExplorerComponent implements OnInit {
     }
 
     onSelect(event: MouseEvent, element: any) {
+        const old = element.parent;
         if (!(event.metaKey || event.ctrlKey)) {
             this.selection = [element];
         }
@@ -85,6 +88,7 @@ export class FileExplorerComponent implements OnInit {
             if (selected > -1) {
                 this.selection.splice(selected, 1);
             } else {
+                element.oldParent = old;
                 this.selection.push(element);
             }
         }
@@ -93,9 +97,9 @@ export class FileExplorerComponent implements OnInit {
 
     isSelected(item) {
         let selected = -1;
-        const {id, isFolder, parent} = item;
+        const {id, isFolder, parent, oldParent} = item;
         this.selection.map((selectedItem, i) => {
-            if (selectedItem.id === id && selectedItem.isFolder === isFolder && selectedItem.parent === parent) {
+            if (selectedItem.id === id && selectedItem.isFolder === isFolder && selectedItem.parent === parent && selectedItem.oldParent === oldParent) {
                 selected = i;
             }
         });
@@ -113,7 +117,7 @@ export class FileExplorerComponent implements OnInit {
             .filter((cutedItem) => cutedItem.id == id && cutedItem.isFolder == isFolder && cutedItem.parent == parent).length;
     }
 
-    onPaste(){
+    onPaste() {
         this.cut.emit(this.cuted);
     }
 
