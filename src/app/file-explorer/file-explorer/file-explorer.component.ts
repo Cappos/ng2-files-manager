@@ -22,6 +22,10 @@ export class FileExplorerComponent implements OnInit {
     @Output() navigatedDown = new EventEmitter<FileElement>();
     @Output() navigatedUp = new EventEmitter();
 
+    selection: any = [];
+    cuted: any = [];
+    context: any;
+
     constructor(public dialog: MatDialog) {
     }
 
@@ -66,9 +70,46 @@ export class FileExplorerComponent implements OnInit {
     }
 
     openMenu(event: MouseEvent, element: FileElement, viewChild: MatMenuTrigger) {
-        console.log(element);
         event.preventDefault();
         viewChild.openMenu();
+    }
+
+    onSelect(event: MouseEvent, element: any) {
+
+        if (!(event.metaKey || event.ctrlKey)) {
+            this.selection = [element];
+        }
+        else {
+            const selected = this.isSelected(element);
+            if (selected > -1) {
+                this.selection.splice(selected, 1);
+            } else {
+                this.selection.push(element);
+            }
+        }
+    }
+
+    isSelected(item) {
+        let selected = -1;
+        const {id, isFolder, parent} = item;
+        this.selection.map((selectedItem, i) => {
+            if (selectedItem.id === id && selectedItem.isFolder === isFolder && selectedItem.parent === parent) {
+                selected = i;
+            }
+        });
+        return selected;
+    }
+
+    onCut() {
+        this.cuted = this.selection.length ? this.selection.map(item => Object.assign({}, item)) : [this.context];
+        this.selection = [];
+        console.log(this.cuted);
+    }
+
+    isCut(item: any) {
+        const {id, isFolder, parent} = item;
+        return this.cuted
+            .filter((cutedItem) => cutedItem.id == id && cutedItem.isFolder == isFolder && cutedItem.parent == parent).length;
     }
 
 }

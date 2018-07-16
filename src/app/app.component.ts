@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FileElement} from './file-explorer/model/file-element';
 import {FileService} from './service/file.service';
 import {Observable} from 'rxjs';
@@ -9,13 +9,23 @@ import {Observable} from 'rxjs';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit{
     fileElements: Observable<FileElement[]>;
     currentRoot: FileElement;
     currentPath: string;
     canNavigateUp = false;
 
     constructor(private fileService: FileService) {}
+
+    ngOnInit() {
+        const folderA = this.fileService.add({ name: 'Folder A', isFolder: true, parent: 'root' });
+        this.fileService.add({ name: 'Folder B', isFolder: true, parent: 'root' });
+        this.fileService.add({ name: 'Folder C', isFolder: true, parent: folderA.id });
+        this.fileService.add({ name: 'File A', isFolder: false, parent: 'root' });
+        this.fileService.add({ name: 'File B', isFolder: false, parent: 'root' });
+
+        this.updateFileElementQuery();
+    }
 
     addFolder(folder: { name: string }) {
         this.fileService.add({ isFolder: true, name: folder.name, parent: this.currentRoot ? this.currentRoot.id : 'root' });
@@ -62,7 +72,7 @@ export class AppComponent {
 
     pushToPath(path: string, folderName: string) {
         let p = path ? path : '';
-        p += `${folderName}/`;
+        p += `${folderName} / `;
         return p;
     }
 

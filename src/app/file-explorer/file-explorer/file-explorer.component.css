@@ -28,3 +28,11 @@
 .spacer {
     flex: 1 1 auto;
 }
+
+.bgc-gray {
+    background-color: #eeeeee;
+}
+
+.bgc-cut {
+    background-color: #666666;
+}
