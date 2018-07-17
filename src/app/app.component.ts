@@ -39,13 +39,15 @@ export class AppComponent implements OnInit {
     }
 
     addFile(file) {
-        if(file.fileAdded){
+        if (file.fileAdded) {
             this.updateFileElementQuery();
         }
     }
 
-    removeElement(element: FileElement) {
-        this.fileService.delete(element.id);
+    removeElement(element) {
+        element.forEach(el => {
+            this.fileService.delete(el.id);
+        });
         this.updateFileElementQuery();
     }
 

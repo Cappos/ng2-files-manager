@@ -37,8 +37,8 @@ export class FileExplorerComponent implements OnInit {
     ngOnInit() {
     }
 
-    deleteElement(element: FileElement) {
-        this.elementRemoved.emit(element);
+    deleteElement() {
+        this.elementRemoved.emit(this.selection);
     }
 
     navigate(element: FileElement) {
