@@ -13,7 +13,8 @@ export class AppComponent implements OnInit {
     fileElements: Observable<FileElement[]>;
     currentRoot: FileElement;
     currentPath: string;
-    curenFolder: any;
+    currentPathId: FileElement[] = [];
+    parentFolder: any;
     canNavigateUp = false;
     selected: FileElement[];
     cuted: FileElement[];
@@ -59,23 +60,34 @@ export class AppComponent implements OnInit {
     navigateUp() {
         if (this.currentRoot && this.currentRoot.parent === 'root') {
             this.currentRoot = null;
-            this.curenFolder = null;
+            this.parentFolder.id = 'root';
             this.canNavigateUp = false;
             this.updateFileElementQuery();
         } else {
-            this.curenFolder = this.currentRoot;
+            this.parentFolder = this.currentRoot;
             this.currentRoot = this.fileService.get(this.currentRoot.parent);
+
             this.updateFileElementQuery();
         }
         this.currentPath = this.popFromPath(this.currentPath);
+        this.currentPathId.splice(-1, 1);
     }
 
     navigateToFolder(element: FileElement) {
         this.currentRoot = element;
-        this.curenFolder = element;
+        this.parentFolder = element;
         this.updateFileElementQuery();
         this.currentPath = this.pushToPath(this.currentPath, element.name);
+
+        if (this.currentPathId.indexOf(element) != -1) {
+            let index = this.currentPathId.indexOf(element);
+            this.currentPathId.splice(index + 1);
+        }
+        else {
+            this.currentPathId.push(element);
+        }
         this.canNavigateUp = true;
+
     }
 
     pushToPath(path: string, folderName: string) {
@@ -93,8 +105,10 @@ export class AppComponent implements OnInit {
     }
 
     onPaste(ev: any) {
-        console.log(this.curenFolder);
-        console.log(ev);
+        for (let el in ev) {
+            this.fileService.update(ev[el].id, {parent: this.parentFolder.id});
+        }
+        this.updateFileElementQuery();
     }
 
 }

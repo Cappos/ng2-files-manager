@@ -14,6 +14,7 @@ export class FileExplorerComponent implements OnInit {
     @Input() fileElements: FileElement[];
     @Input() canNavigateUp: string;
     @Input() path: string;
+    @Input() pathId: string;
 
     @Output() folderAdded = new EventEmitter<{ name: string }>();
     @Output() elementRemoved = new EventEmitter<FileElement>();
@@ -21,6 +22,7 @@ export class FileExplorerComponent implements OnInit {
     @Output() elementMoved = new EventEmitter<{ element: FileElement; moveTo: FileElement }>();
     @Output() navigatedDown = new EventEmitter<FileElement>();
     @Output() navigatedUp = new EventEmitter();
+    @Output() navigatedToFolder = new EventEmitter();
     @Output() select = new EventEmitter();
     @Output() cut = new EventEmitter();
 
@@ -48,9 +50,11 @@ export class FileExplorerComponent implements OnInit {
         this.navigatedUp.emit();
     }
 
+    navigateToFolder(folder) {
+        this.navigatedToFolder.emit(folder);
+    }
+
     moveElement(element: FileElement, moveTo: FileElement) {
-        console.log(element);
-        console.log(moveTo);
         this.elementMoved.emit({element: element, moveTo: moveTo});
     }
 
@@ -119,6 +123,7 @@ export class FileExplorerComponent implements OnInit {
 
     onPaste() {
         this.cut.emit(this.cuted);
+        this.cuted = [];
     }
 
 }

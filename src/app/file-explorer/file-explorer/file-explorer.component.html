@@ -3,7 +3,15 @@
         arrow_back
     </mat-icon>
     <span style="margin-left: 8px">
-    {{path || 'Files'}}
+        <ng-template [ngIf]="pathId.length">
+            <ng-container *ngFor="let path of pathId; let last = last">
+               <a class="pointer" (click)="navigateToFolder(path)" *ngIf="!last">{{path.name}} <span>/ </span> </a>
+               <a *ngIf="last">{{path.name}}</a>
+            </ng-container>
+        </ng-template>
+        <ng-template [ngIf]="!pathId.length">
+            Root
+        </ng-template>
   </span>
     <span class="spacer"></span>
     <button mat-icon-button [matMenuTriggerFor]="containerContext">
@@ -11,10 +19,8 @@
     </button>
 </mat-toolbar>
 
-<div class="container" fxFlex fxLayout="row" fxLayoutAlign="space-between stretch" >
-
-    <div class="content" fxFlex fxLayout="row" >
-
+<div class="container" fxFlex fxLayout="row" fxLayoutAlign="space-between stretch">
+    <div class="content" fxFlex fxLayout="row">
         <mat-grid-list cols="8" rowHeight="100px" fxFlex>
             <mat-grid-tile *ngFor="let element of fileElements" class=file-or-folder>
                 <span [matMenuTriggerFor]="rootMenu"
@@ -26,8 +32,7 @@
                      [ngClass]="{ 'bgc-gray': isSelected(element) > -1, 'bgc-cut': isCut(element)}"
                      (dblclick)="navigate(element)"
                      (click)="onSelect($event, element)"
-                     (contextmenu)="openMenu($event, element, menuTrigger)"
-                     no-bubbling>
+                     (contextmenu)="openMenu($event, element, menuTrigger)">
 
                     <mat-icon color="primary"
                               class="file-or-folder-icon pointer"
@@ -48,7 +53,6 @@
 </div>
 
 
-
 <mat-menu #containerContext="matMenu" xPosition="after">
     <button mat-menu-item (click)="openNewFolderDialog()">
         <mat-icon>folder_open</mat-icon>
@@ -62,10 +66,10 @@
 
 <mat-menu #rootMenu="matMenu" [overlapTrigger]="false">
     <ng-template matMenuContent let-element="element">
-        <button mat-menu-item [matMenuTriggerFor]="moveToMenu" [matMenuTriggerData]="{self: element}">
-            <mat-icon>open_with</mat-icon>
-            <span>Move To</span>
-        </button>
+        <!--<button mat-menu-item [matMenuTriggerFor]="moveToMenu" [matMenuTriggerData]="{self: element}">-->
+        <!--<mat-icon>open_with</mat-icon>-->
+        <!--<span>Move To</span>-->
+        <!--</button>-->
         <button mat-menu-item (click)="onCut(element)">
             <mat-icon>content_cut</mat-icon>
             <span>Cut</span>
@@ -84,7 +88,9 @@
 <mat-menu #moveToMenu="matMenu">
     <ng-template matMenuContent let-self="self">
         <ng-container *ngFor="let element of fileElements">
-            <button *ngIf="element.isFolder && element.id !== self.id" mat-menu-item (click)="moveElement(self, element)">{{element.name}}</button>
+            <button *ngIf="element.isFolder && element.id !== self.id" mat-menu-item
+                    (click)="moveElement(self, element)">{{element.name}}
+            </button>
         </ng-container>
     </ng-template>
 </mat-menu>
