@@ -16,7 +16,6 @@
     <span class="spacer"></span>
 
     <app-upload (filesUploaded)="filesAdd($event)"></app-upload>
-
     <button mat-icon-button [matMenuTriggerFor]="containerContext">
         <mat-icon>more_vert</mat-icon>
     </button>
@@ -62,6 +61,10 @@
 
 
 <mat-menu #containerContext="matMenu" xPosition="after">
+    <button mat-menu-item [matMenuTriggerFor]="sortMenu" [matMenuTriggerData]="{self: element}">
+        <mat-icon>sort</mat-icon>
+        <span>Sort</span>
+    </button>
     <button mat-menu-item (click)="openNewFolderDialog()">
         <mat-icon>folder_open</mat-icon>
         <span>New Folder</span>
@@ -100,5 +103,18 @@
                     (click)="moveElement(self, element)">{{element.name}}
             </button>
         </ng-container>
+    </ng-template>
+</mat-menu>
+
+<mat-menu #sortMenu="matMenu">
+    <ng-template matMenuContent let-self="self">
+        <button mat-menu-item (click)="orderACS()">
+            <mat-icon>arrow_upward</mat-icon>
+            <span>Ascending</span>
+        </button>
+        <button mat-menu-item (click)="orderDCS()">
+            <mat-icon>arrow_downward</mat-icon>
+            <span>Descending</span>
+        </button>
     </ng-template>
 </mat-menu>
