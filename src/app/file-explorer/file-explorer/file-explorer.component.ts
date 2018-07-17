@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FileElement} from '../model/file-element';
 import {MatDialog, MatMenuTrigger} from '@angular/material';
 import {NewFolderDialogComponent} from '../modals/new-folder-dialog/new-folder-dialog.component';
@@ -84,7 +84,18 @@ export class FileExplorerComponent implements OnInit {
 
     openMenu(event: MouseEvent, element: FileElement, viewChild: MatMenuTrigger) {
         event.preventDefault();
+        event.stopPropagation();
         viewChild.openMenu();
+    }
+
+    openContextMenu(event: MouseEvent, viewChild: MatMenuTrigger){
+        event.preventDefault();
+        event.stopPropagation();
+        viewChild.openMenu();
+        let element = document.getElementById('cdk-overlay-0');
+        setTimeout(()=> {
+            element.style.cssText = `position: fixed; left: ${event.pageX}px; top: ${event.pageY}px `;
+        }, 20);
     }
 
     onSelect(event: MouseEvent, element: any) {

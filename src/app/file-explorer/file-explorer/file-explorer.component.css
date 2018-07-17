@@ -21,6 +21,9 @@
     font-size: 50px;
 }
 
+.content {
+    min-height: 50vh;
+}
 .pointer {
     cursor: pointer;
 }

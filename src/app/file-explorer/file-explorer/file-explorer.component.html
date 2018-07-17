@@ -23,13 +23,18 @@
 </mat-toolbar>
 
 <div class="container" fxFlex fxLayout="row" fxLayoutAlign="space-between stretch">
-    <div class="content" fxFlex fxLayout="row">
+    <div class="content" fxFlex fxLayout="row" (contextmenu)="openContextMenu($event, menuContextTrigger)">
+          <span [matMenuTriggerFor]="containerContext"
+                #menuContextTrigger="matMenuTrigger">
+                </span>
         <mat-grid-list cols="8" rowHeight="100px" fxFlex>
             <mat-grid-tile *ngFor="let element of fileElements" class=file-or-folder>
+
                 <span [matMenuTriggerFor]="rootMenu"
                       [matMenuTriggerData]="{element: element}"
                       #menuTrigger="matMenuTrigger">
                 </span>
+
                 <div fxLayout="column"
                      fxLayoutAlign="space-between center"
                      [ngClass]="{ 'bgc-gray': isSelected(element) > -1, 'bgc-cut': isCut(element)}"
