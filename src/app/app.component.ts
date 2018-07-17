@@ -38,6 +38,12 @@ export class AppComponent implements OnInit {
         this.updateFileElementQuery();
     }
 
+    addFile(file) {
+        if(file.fileAdded){
+            this.updateFileElementQuery();
+        }
+    }
+
     removeElement(element: FileElement) {
         this.fileService.delete(element.id);
         this.updateFileElementQuery();

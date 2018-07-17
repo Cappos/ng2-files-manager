@@ -1,4 +1,4 @@
-import {Component, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Output, ViewChild} from '@angular/core';
 import {UploadService} from '../upload.service';
 import {MatDialogRef} from '@angular/material';
 import {forkJoin} from 'rxjs';
@@ -77,5 +77,6 @@ export class UploadDialogComponent {
             // ... and the component is no longer uploading
             this.uploading = false;
         });
+
     }
 }

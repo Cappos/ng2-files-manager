@@ -1,11 +1,11 @@
 <div style="padding: 100px; height: 100%; box-sizing: border-box;">
     <mat-card style="height: 100%; box-sizing: border-box; padding:0">
-        <app-upload></app-upload>
         <app-file-explorer [fileElements]="fileElements | async"
                            [path]="currentPath"
                            [pathId]="currentPathId"
                            [canNavigateUp]="canNavigateUp"
                            (folderAdded)="addFolder($event)"
+                           (filesAdded)="addFile($event)"
                            (elementRemoved)="removeElement($event)"
                            (navigatedDown)="navigateToFolder($event)"
                            (navigatedToFolder)="navigateToFolder($event)"

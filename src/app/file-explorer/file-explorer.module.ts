@@ -10,6 +10,7 @@ import {FormsModule} from '@angular/forms';
 import {FileExplorerComponent} from './file-explorer/file-explorer.component';
 import { NewFolderDialogComponent } from './modals/new-folder-dialog/new-folder-dialog.component';
 import { RenameDialogComponent } from './modals/rename-dialog/rename-dialog.component';
+import {UploadModule} from '../upload/upload.module';
 
 @NgModule({
   imports: [
@@ -23,7 +24,8 @@ import { RenameDialogComponent } from './modals/rename-dialog/rename-dialog.comp
       MatDialogModule,
       MatInputModule,
       FormsModule,
-      MatButtonModule
+      MatButtonModule,
+      UploadModule
   ],
     declarations: [FileExplorerComponent, NewFolderDialogComponent, RenameDialogComponent],
     exports: [FileExplorerComponent],

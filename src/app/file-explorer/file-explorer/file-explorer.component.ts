@@ -14,9 +14,10 @@ export class FileExplorerComponent implements OnInit {
     @Input() fileElements: FileElement[];
     @Input() canNavigateUp: string;
     @Input() path: string;
-    @Input() pathId: string;
+    @Input() pathId: any;
 
     @Output() folderAdded = new EventEmitter<{ name: string }>();
+    @Output() filesAdded = new EventEmitter<{ fileAdded: boolean }>();
     @Output() elementRemoved = new EventEmitter<FileElement>();
     @Output() elementRenamed = new EventEmitter<FileElement>();
     @Output() elementMoved = new EventEmitter<{ element: FileElement; moveTo: FileElement }>();
@@ -65,6 +66,10 @@ export class FileExplorerComponent implements OnInit {
                 this.folderAdded.emit({name: res});
             }
         });
+    }
+
+    filesAdd(ev){
+        this.filesAdded.emit({fileAdded: ev});
     }
 
     openRenameDialog(element: FileElement) {
