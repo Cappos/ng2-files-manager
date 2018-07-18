@@ -4,7 +4,7 @@ const router = express.Router();
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
-
+const File = mongoose.model('file');
 
 
 /** API path that will upload the files */
@@ -23,15 +23,38 @@ router.post('/', function (req, res, next) {
 
     let upload = multer({ //multer settings for single upload
         storage: storage
-    }).single('file');
+    }).any();
+
+    let oldPath = '';
+    let parentId = '';
+    let oldParentId= '';
 
     upload(req, res, function (err) {
         if (err) {
             res.json({error_code: 1, err_desc: err});
             return;
         }
+        let fileData = req.files[0];
 
-        res.send(req.file);
+        let file =  new File({
+            destination: fileData.destination,
+            encoding: fileData.encoding,
+            fieldname: fileData.fieldname,
+            filename: fileData.filename,
+            mimetype: fileData.mimetype,
+            originalname: fileData.originalname,
+            path: fileData.path,
+            oldPath: oldPath,
+            parentId: parentId,
+            oldParentId: oldParentId,
+            size: fileData.size,
+            isFolder: false
+        }).save(file => file);
+
+        console.log(req.files);
+
+
+        res.send(req.files);
     });
 
 });

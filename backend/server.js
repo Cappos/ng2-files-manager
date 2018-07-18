@@ -1,9 +1,11 @@
 const express = require('express');
+const models = require('./models');
 const path = require('path');
 const http = require('http');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const uploadRoutes = require('./routes/upload');
+const folderRoutes = require('./routes/folders');
 const uploadsDir = './upload';
 
 const app = express();
@@ -45,6 +47,7 @@ app.use(function (req, res, next) {
 
 // Create dir if not exist
 app.use('/upload', uploadRoutes);
+app.use('/folder', folderRoutes);
 
 //Set Port
 const port = process.env.PORT || '8000';
