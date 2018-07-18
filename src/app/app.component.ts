@@ -18,6 +18,7 @@ export class AppComponent implements OnInit {
     canNavigateUp = false;
     selected: FileElement[];
     cuted: FileElement[];
+    fileTypes: string = 'image/*,video/*,.pdf,.csv,.doc,.xls';
 
 
     constructor(private fileService: FileService) {

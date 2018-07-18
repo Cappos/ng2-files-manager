@@ -1,6 +1,6 @@
-import {Component, EventEmitter, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Inject, OnInit, Output, ViewChild} from '@angular/core';
 import {UploadService} from '../upload.service';
-import {MatDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {forkJoin} from 'rxjs';
 
 
@@ -10,7 +10,7 @@ import {forkJoin} from 'rxjs';
     styleUrls: ['./upload-dialog.component.css']
 })
 
-export class UploadDialogComponent {
+export class UploadDialogComponent implements OnInit{
     @ViewChild('file') file;
     public files: Set<File> = new Set();
     progress;
@@ -19,8 +19,18 @@ export class UploadDialogComponent {
     showCancelButton = true;
     uploading = false;
     uploadSuccessful = false;
+    fileTypes: string;
 
-    constructor(public dialogRef: MatDialogRef<UploadDialogComponent>, public uploadService: UploadService) {}
+    constructor(public dialogRef: MatDialogRef<UploadDialogComponent>, public uploadService: UploadService, @Inject(MAT_DIALOG_DATA) private data: any) {}
+
+
+    ngOnInit(){
+        if(this.data){
+            console.log(this.data.fileType);
+            this.fileTypes = this.data.fileType;
+        }
+
+    }
 
     addFiles() {
         this.file.nativeElement.click();

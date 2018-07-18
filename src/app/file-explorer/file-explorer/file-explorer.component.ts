@@ -15,6 +15,7 @@ export class FileExplorerComponent implements OnInit {
     @Input() canNavigateUp: string;
     @Input() path: string;
     @Input() pathId: any;
+    @Input() fileTypes: string;
 
     @Output() folderAdded = new EventEmitter<{ name: string }>();
     @Output() filesAdded = new EventEmitter<{ fileAdded: boolean }>();
@@ -68,7 +69,7 @@ export class FileExplorerComponent implements OnInit {
         });
     }
 
-    filesAdd(ev){
+    filesAdd(ev) {
         this.filesAdded.emit({fileAdded: ev});
     }
 
@@ -88,13 +89,19 @@ export class FileExplorerComponent implements OnInit {
         viewChild.openMenu();
     }
 
-    openContextMenu(event: MouseEvent, viewChild: MatMenuTrigger){
+    openContextMenu(event: MouseEvent, viewChild: MatMenuTrigger) {
         event.preventDefault();
         event.stopPropagation();
         viewChild.openMenu();
-        let element = document.getElementById('cdk-overlay-0');
-        setTimeout(()=> {
-            element.style.cssText = `position: fixed; left: ${event.pageX}px; top: ${event.pageY}px `;
+
+        // Todo get element id to be dynamic
+        let ids = ['cdk-overlay-0', 'cdk-overlay-1', 'cdk-overlay-3', 'cdk-overlay-4', 'cdk-overlay-5'];
+        let elements = this.getElementsByIds(ids);
+
+        setTimeout(() => {
+            elements.forEach(element => {
+                element.style.cssText = `position: fixed; left: ${event.pageX}px; top: ${event.pageY}px `;
+            });
         }, 20);
     }
 
@@ -142,7 +149,7 @@ export class FileExplorerComponent implements OnInit {
         this.cuted = [];
     }
 
-    orderACS(){
+    orderACS() {
         this.fileElements.sort((a, b) => {
             if (a.name < b.name) return -1;
             else if (a.name > b.name) return 1;
@@ -150,12 +157,22 @@ export class FileExplorerComponent implements OnInit {
         });
     }
 
-    orderDCS(){
+    orderDCS() {
         this.fileElements.sort((a, b) => {
             if (a.name > b.name) return -1;
             else if (a.name < b.name) return 1;
             else return 0;
         });
     }
+
+    getElementsByIds(ids) {
+        let ele = [];
+        for (let i = 0; i < ids.length; i++) {
+            if (document.getElementById(ids[i])) {
+                ele[i] = document.getElementById(ids[i]);
+            }
+        }
+        return ele;
+    };
 
 }

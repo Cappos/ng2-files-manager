@@ -15,7 +15,8 @@
   </span>
     <span class="spacer"></span>
 
-    <app-upload (filesUploaded)="filesAdd($event)"></app-upload>
+    <app-upload (filesUploaded)="filesAdd($event)" [fileTypes]="fileTypes"></app-upload>
+
     <button mat-icon-button [matMenuTriggerFor]="containerContext">
         <mat-icon>more_vert</mat-icon>
     </button>

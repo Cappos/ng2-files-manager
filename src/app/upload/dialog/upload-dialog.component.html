@@ -1,4 +1,4 @@
-<input type="file" #file style="display: none" (change)="onFilesAdded()" multiple />
+<input type="file" #file style="display: none" [accept]="fileTypes" (change)="onFilesAdded()" multiple />
 
 <div class="container" fxLayout="column" fxLayoutAlign="space-evenly stretch">
     <h1 mat-dialog-title>Upload Files</h1>
