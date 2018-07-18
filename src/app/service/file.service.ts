@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {FileElement} from '../file-explorer/model/file-element';
 import {v4} from 'uuid';
 import {BehaviorSubject, Observable} from 'rxjs';
+import _ from "lodash"
 
 
 export interface IFileService {
@@ -27,7 +28,7 @@ export class FileService {
 
     add(fileElement: FileElement) {
         fileElement.id = v4();
-        this.map.set(fileElement.id, this.clone(fileElement));
+        this.map.set(fileElement.id, _.cloneDeep(fileElement));
         return fileElement;
     }
 
@@ -43,10 +44,9 @@ export class FileService {
 
     queryInFolder(folderId: string) {
         const result: FileElement[] = [];
-
         this.map.forEach(element => {
             if (element.parent === folderId) {
-                result.push(this.clone(element));
+                result.push(_.cloneDeep(element));
             }
         });
         if (!this.querySubject) {
@@ -61,8 +61,8 @@ export class FileService {
         return this.map.get(id);
     }
 
-    clone(element: FileElement) {
-        return JSON.parse(JSON.stringify(element));
-    }
+    // clone(element: FileElement) {
+    //     return JSON.parse(JSON.stringify(element));
+    // }
 
 }

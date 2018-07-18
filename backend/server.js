@@ -46,7 +46,6 @@ app.use(function (req, res, next) {
 // Create dir if not exist
 app.use('/upload', uploadRoutes);
 
-
 //Set Port
 const port = process.env.PORT || '8000';
 app.set('port', port);
@@ -55,26 +54,4 @@ const server = http.createServer(app);
 
 server.listen(port, () => console.log(`Running on localhost:${port}`));
 
-
 module.exports = app;
-
-
-
-// const express = require('express');
-// const upload = require('./upload');
-// const cors = require('cors');
-//
-// const server = express();
-//
-// let corsOptions = {
-//     origin: '*',
-//     optionsSuccessStatus: 200
-// };
-//
-// server.use(cors(corsOptions));
-//
-// server.post('/upload', upload);
-//
-// server.listen(8000, () => {
-//     console.log('Server started!');
-// });

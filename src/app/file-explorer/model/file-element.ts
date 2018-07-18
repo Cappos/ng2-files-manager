@@ -4,4 +4,6 @@ export class FileElement {
     name: string;
     parent: string;
     oldParent: string;
+    currentPath: string;
+    oldPath: string;
 }

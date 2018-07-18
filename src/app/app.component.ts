@@ -14,7 +14,6 @@ export class AppComponent implements OnInit {
     currentRoot: FileElement;
     currentPath: string;
     currentPathId: FileElement[] = [];
-    parentFolder: any;
     canNavigateUp = false;
     selected: FileElement[];
     cuted: FileElement[];
@@ -25,17 +24,31 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
-        const folderA = this.fileService.add({name: 'Folder A', isFolder: true, parent: 'root', oldParent: ''});
-        this.fileService.add({name: 'Folder B', isFolder: true, parent: 'root', oldParent: ''});
-        this.fileService.add({name: 'Folder C', isFolder: true, parent: folderA.id, oldParent: ''});
-        this.fileService.add({name: 'File A', isFolder: false, parent: 'root', oldParent: ''});
-        this.fileService.add({name: 'File B', isFolder: false, parent: 'root', oldParent: ''});
+        const folderA = this.fileService.add({
+            name: 'Folder A',
+            isFolder: true,
+            parent: 'root',
+            oldParent: '',
+            currentPath: '/',
+            oldPath: ''
+        });
+        this.fileService.add({name: 'Folder B', isFolder: true, parent: 'root', oldParent: '', currentPath: '/', oldPath: '/'});
+        this.fileService.add({name: 'Folder C', isFolder: true, parent: folderA.id, oldParent: '', currentPath: 'Folder A', oldPath: '/'});
+        this.fileService.add({name: 'File A', isFolder: false, parent: 'root', oldParent: '', currentPath: '/', oldPath: '/'});
+        this.fileService.add({name: 'File B', isFolder: false, parent: 'root', oldParent: '', currentPath: '/', oldPath: '/'});
 
         this.updateFileElementQuery();
     }
 
     addFolder(folder: { name: string }) {
-        this.fileService.add({isFolder: true, name: folder.name, parent: this.currentRoot ? this.currentRoot.id : 'root', oldParent: ''});
+        this.fileService.add({
+            isFolder: true,
+            name: folder.name,
+            parent: this.currentRoot ? this.currentRoot.id : 'root',
+            oldParent: '',
+            currentPath: this.currentPath,
+            oldPath: ''
+        });
         this.updateFileElementQuery();
     }
 
@@ -69,22 +82,22 @@ export class AppComponent implements OnInit {
     navigateUp() {
         if (this.currentRoot && this.currentRoot.parent === 'root') {
             this.currentRoot = null;
-            this.parentFolder.id = 'root';
             this.canNavigateUp = false;
             this.updateFileElementQuery();
         } else {
-            this.parentFolder = this.currentRoot;
             this.currentRoot = this.fileService.get(this.currentRoot.parent);
-
             this.updateFileElementQuery();
         }
+
         this.currentPath = this.popFromPath(this.currentPath);
+        if(this.currentPath === ''){
+            this.currentPath= '/'
+        }
         this.currentPathId.splice(-1, 1);
     }
 
     navigateToFolder(element: FileElement) {
         this.currentRoot = element;
-        this.parentFolder = element;
         this.updateFileElementQuery();
         this.currentPath = this.pushToPath(this.currentPath, element.name);
 
@@ -101,23 +114,23 @@ export class AppComponent implements OnInit {
 
     pushToPath(path: string, folderName: string) {
         let p = path ? path : '';
-        p += `${folderName} / `;
+        p += `${folderName}/`;
         return p;
     }
 
     popFromPath(path: string) {
         let p = path ? path : '';
-        const split = p.split(' / ');
+        const split = p.split('/');
         split.splice(split.length - 2, 1);
-        p = split.join(' / ');
+        p = split.join('/');
         return p;
     }
 
     onPaste(ev: any) {
+        let currentPath = this.currentPath.replace(/\s/g, '\\ ');
         for (let el in ev) {
-            this.fileService.update(ev[el].id, {parent: this.parentFolder.id});
+            this.fileService.update(ev[el].id, {parent: this.currentRoot? this.currentRoot.id : 'root', oldPath: ev[el].currentPath, currentPath: currentPath});
         }
         this.updateFileElementQuery();
     }
-
 }
