@@ -33,10 +33,42 @@ export class AppComponent implements OnInit {
             oldPath: '',
             mimetype: 'txt'
         });
-        this.fileService.add({name: 'Folder B', isFolder: true, parent: 'root', oldParent: '', currentPath: '/', oldPath: '/', mimetype: 'txt'});
-        this.fileService.add({name: 'Folder C', isFolder: true, parent: folderA.id, oldParent: '', currentPath: 'Folder A', oldPath: '/', mimetype: 'txt'});
-        this.fileService.add({name: 'File A', isFolder: false, parent: 'root', oldParent: '', currentPath: '/', oldPath: '/', mimetype: 'txt'});
-        this.fileService.add({name: 'File B', isFolder: false, parent: 'root', oldParent: '', currentPath: '/', oldPath: '/', mimetype: 'txt'});
+        this.fileService.add({
+            name: 'Folder B',
+            isFolder: true,
+            parent: 'root',
+            oldParent: '',
+            currentPath: '/',
+            oldPath: '/',
+            mimetype: 'txt'
+        });
+        this.fileService.add({
+            name: 'Folder C',
+            isFolder: true,
+            parent: folderA.id,
+            oldParent: '',
+            currentPath: 'Folder A',
+            oldPath: '/',
+            mimetype: 'txt'
+        });
+        this.fileService.add({
+            name: 'File A',
+            isFolder: false,
+            parent: 'root',
+            oldParent: '',
+            currentPath: '/',
+            oldPath: '/',
+            mimetype: 'txt'
+        });
+        this.fileService.add({
+            name: 'File B',
+            isFolder: false,
+            parent: 'root',
+            oldParent: '',
+            currentPath: '/',
+            oldPath: '/',
+            mimetype: 'txt'
+        });
 
         this.updateFileElementQuery();
     }
@@ -61,24 +93,23 @@ export class AppComponent implements OnInit {
     }
 
     removeElement(element) {
-        element.forEach(el => {
-            this.fileService.delete(el.id);
+        this.fileService.delete(element).subscribe(res => {
+            this.updateFileElementQuery();
         });
-        this.updateFileElementQuery();
     }
 
-    moveElement(event: { element: FileElement; moveTo: FileElement }) {
-        this.fileService.update(event.element.id, {parent: event.moveTo.id});
-        this.updateFileElementQuery();
-    }
+    // moveElement(event: { element: FileElement; moveTo: FileElement }) {
+    //     this.fileService.update(event.element.currentPath, {parent: event.moveTo.currentPath});
+    //     this.updateFileElementQuery();
+    // }
 
-    renameElement(element: FileElement) {
-        this.fileService.update(element.id, {name: element.name});
-        this.updateFileElementQuery();
-    }
+    // renameElement(element: FileElement) {
+    //     this.fileService.update(element.currentPath, {name: element.name});
+    //     this.updateFileElementQuery();
+    // }
 
     updateFileElementQuery() {
-        this.fileElements = this.fileService.queryInFolder(this.currentRoot ? this.currentRoot.id : 'root');
+        this.fileElements = this.fileService.queryInFolder(this.currentRoot ? this.currentRoot : 'root');
     }
 
     navigateUp() {
@@ -90,10 +121,9 @@ export class AppComponent implements OnInit {
             this.currentRoot = this.fileService.get(this.currentRoot.parent);
             this.updateFileElementQuery();
         }
-
         this.currentPath = this.popFromPath(this.currentPath);
-        if(this.currentPath === ''){
-            this.currentPath= '/'
+        if (this.currentPath === '') {
+            this.currentPath = '/';
         }
         this.currentPathId.splice(-1, 1);
     }
@@ -102,7 +132,6 @@ export class AppComponent implements OnInit {
         this.currentRoot = element;
         this.updateFileElementQuery();
         this.currentPath = this.pushToPath(this.currentPath, element.name);
-
         if (this.currentPathId.indexOf(element) != -1) {
             let index = this.currentPathId.indexOf(element);
             this.currentPathId.splice(index + 1);
@@ -130,9 +159,8 @@ export class AppComponent implements OnInit {
 
     onPaste(ev: any) {
         let currentPath = this.currentPath.replace(/\s/g, '\\ ');
-        for (let el in ev) {
-            this.fileService.update(ev[el].id, {parent: this.currentRoot? this.currentRoot.id : 'root', oldPath: ev[el].currentPath, currentPath: currentPath});
-        }
-        this.updateFileElementQuery();
+        this.fileService.update(ev, this.currentPath).subscribe((res) => {
+            this.updateFileElementQuery();
+        });
     }
 }

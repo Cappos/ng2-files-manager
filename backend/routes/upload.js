@@ -12,12 +12,14 @@ router.post('/', function (req, res, next) {
 
     // File upload
     let storage = multer.diskStorage({ //multers disk storage settings
+
         destination: function (req, file, cb) {
             cb(null, './upload/');
         },
         filename: function (req, file, cb) {
             let datetimestamp = Date.now();
-            cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length - 1]);
+            // cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length - 1]);
+            cb(null, file.originalname);
         },
     });
 
@@ -34,27 +36,27 @@ router.post('/', function (req, res, next) {
             res.json({error_code: 1, err_desc: err});
             return;
         }
+
+        let dir = req.body;
+        console.log(dir);
         let fileData = req.files[0];
 
-        let file =  new File({
-            destination: fileData.destination,
-            encoding: fileData.encoding,
-            fieldname: fileData.fieldname,
-            filename: fileData.filename,
-            mimetype: fileData.mimetype,
-            originalname: fileData.originalname,
-            path: fileData.path,
-            oldPath: oldPath,
-            parentId: parentId,
-            oldParentId: oldParentId,
-            size: fileData.size,
-            isFolder: false
-        }).save(file => file);
+        // let file =  new File({
+        //     destination: fileData.destination,
+        //     encoding: fileData.encoding,
+        //     fieldname: fileData.fieldname,
+        //     filename: fileData.filename,
+        //     mimetype: fileData.mimetype,
+        //     originalname: fileData.originalname,
+        //     path: fileData.path,
+        //     oldPath: oldPath,
+        //     parentId: parentId,
+        //     oldParentId: oldParentId,
+        //     size: fileData.size,
+        //     isFolder: false
+        // }).save(file => file);
 
-        console.log(req.files);
-
-
-        res.send(req.files);
+        // res.send(req.files);
     });
 
 });

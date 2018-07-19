@@ -9,9 +9,8 @@ const rimraf = require('rimraf');
 
 /** API path that will upload the files */
 router.post('/', function (req, res, next) {
-    const path = req.body.path;
-    const folderContent = walkSync(`upload/${path}`);
-
+    const path = req.body.path === "/" ? `upload/${req.body.path}` : req.body.path;
+    const folderContent = walkSync(path);
     res.status(200).json({
         message: 'Successfully get folder content list',
         files: folderContent
@@ -21,11 +20,9 @@ router.post('/', function (req, res, next) {
 /** API path that will create folder */
 router.post('/create', function (req, res, next) {
     const dir = `upload/${req.body.dir}`;
-
     if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
     }
-
     res.status(200).json({
         message: 'Directory successfully created',
         files: dir
@@ -35,17 +32,14 @@ router.post('/create', function (req, res, next) {
 /** API path that will move files and folders */
 router.post('/move', function (req, res, next) {
     const data = req.body.paths;
-
     data.forEach(item => {
-        let srcpath = `upload/${item.oldPath}`;
+        let srcpath = `${item.oldPath}`;
         let dstpath = `upload/${item.currentPath}`;
-
         fs.move(srcpath, dstpath, err => {
             if (err) return console.error(err);
             console.log('success!')
         });
     });
-
     res.status(200).json({
         message: 'Directory successfully created'
     });
@@ -54,9 +48,10 @@ router.post('/move', function (req, res, next) {
 /** API path that will delete files and folders */
 router.post('/delete', function (req, res, next) {
     const dirs = req.body.paths;
+    let path;
 
     dirs.forEach(item => {
-        let path = `upload/${item.dir}/${item.filename}`;
+        item.dir === "" ? path = `upload/${item.dir}/${item.filename}` : path = `${item.dir}/${item.filename}`;
 
         if (item.isFolder) {
             rimraf(path, (err) => {
@@ -71,7 +66,6 @@ router.post('/delete', function (req, res, next) {
             });
         }
     });
-
     res.status(200).json({
         message: 'Directory successfully deleted',
         files: dirs
@@ -89,12 +83,14 @@ const walkSync = (dir, filelist = []) => {
         filelist = fs.statSync(path.join(dir, file)).isDirectory() ?
             filelist.concat({
                 name: file,
-                path: path.join(dir, file),
+                currentPath: path.join(dir, file),
+                parent: dir.replace('upload//', ''),
                 isFolder: true
             })
             : filelist.concat({
                 name: file,
-                path: path.join(dir, file),
+                currentPath: path.join(dir, file),
+                parent: dir.replace('upload//', ''),
                 size: fs.statSync(path.join(dir, file)).size,
                 type: mime.getType(file),
                 isFolder: false

@@ -12,7 +12,7 @@ export class UploadService {
     }
 
 
-    public upload(files: Set<File>): { [key: string]: Observable<number> } {
+    public upload(files: Set<File>, dir): { [key: string]: Observable<number> } {
         // this will be the our resulting map
         const status = {};
 
@@ -20,6 +20,7 @@ export class UploadService {
             // create a new multipart-form for every file
             const formData: FormData = new FormData();
             formData.append('file', file, file.name);
+            formData.append('dir',  'dir',dir ? dir : '/upload');
 
             // create a http-post request and pass the form
             // tell it to report the upload progress

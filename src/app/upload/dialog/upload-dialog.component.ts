@@ -26,10 +26,8 @@ export class UploadDialogComponent implements OnInit{
 
     ngOnInit(){
         if(this.data){
-            console.log(this.data.fileType);
             this.fileTypes = this.data.fileType;
         }
-
     }
 
     addFiles() {

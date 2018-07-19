@@ -33,6 +33,7 @@ export class FileExplorerComponent implements OnInit {
 
 
     constructor(public dialog: MatDialog) {
+        console.log(this.path);
     }
 
     ngOnInit() {
@@ -124,9 +125,9 @@ export class FileExplorerComponent implements OnInit {
 
     isSelected(item) {
         let selected = -1;
-        const {id, isFolder, parent, oldParent} = item;
+        const {currentPath, isFolder, parent} = item;
         this.selection.map((selectedItem, i) => {
-            if (selectedItem.id === id && selectedItem.isFolder === isFolder && selectedItem.parent === parent && selectedItem.oldParent === oldParent) {
+            if (selectedItem.currentPath === currentPath && selectedItem.isFolder === isFolder && selectedItem.parent === parent) {
                 selected = i;
             }
         });

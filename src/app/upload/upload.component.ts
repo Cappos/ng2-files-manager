@@ -13,14 +13,18 @@ import {MatDialog} from '@angular/material';
 export class UploadComponent {
     @Output() filesUploaded = new EventEmitter();
     @Input() fileTypes: string;
+    @Input() dir: string;
 
     constructor(public dialog: MatDialog, public uploadService: UploadService) {
     }
 
-    public openUploadDialog(fileTypes) {
+    public openUploadDialog(fileTypes, dir) {
+
+
         let dialogRef = this.dialog.open(UploadDialogComponent, {
             data: {
-                fileType: fileTypes
+                fileType: fileTypes,
+                dir: dir ? dir : '/'
             },
             width: '50%', height: '50%'
         });

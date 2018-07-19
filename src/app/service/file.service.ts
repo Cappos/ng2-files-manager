@@ -1,18 +1,20 @@
 import {Injectable} from '@angular/core';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {FileElement} from '../file-explorer/model/file-element';
 import {v4} from 'uuid';
 import {BehaviorSubject, Observable} from 'rxjs';
-import _ from "lodash"
+import _ from 'lodash';
 
+const url = 'http://localhost:8000/folder';
 
 export interface IFileService {
     add(fileElement: FileElement);
 
-    delete(id: string);
+    delete(files: any): Observable<any>;
 
-    update(id: string, update: Partial<FileElement>);
+    update(oldPath: string, currentPath: string): Observable<any>;
 
-    queryInFolder(folderId: string): Observable<FileElement[]>;
+    queryInFolder(folderId: any): Observable<FileElement[]>;
 
     get(id: string): FileElement;
 }
@@ -23,7 +25,7 @@ export class FileService {
     private map = new Map<string, FileElement>();
     private querySubject: BehaviorSubject<FileElement[]>;
 
-    constructor() {
+    constructor(private http: HttpClient) {
     }
 
     add(fileElement: FileElement) {
@@ -32,23 +34,42 @@ export class FileService {
         return fileElement;
     }
 
-    delete(id: string) {
-        this.map.delete(id);
-    }
+    delete(files: any) {
+        console.log(files);
+        let headers = new HttpHeaders().set('Content-Type', 'application/json');
+        let paths = [];
 
-    update(id: string, update: Partial<FileElement>) {
-        let element = this.map.get(id);
-        element = Object.assign(element, update);
-        this.map.set(element.id, element);
-    }
-
-    queryInFolder(folderId: string) {
-        const result: FileElement[] = [];
-        this.map.forEach(element => {
-            if (element.parent === folderId) {
-                result.push(_.cloneDeep(element));
-            }
+        files.forEach(el => {
+            paths.push({dir: el.parent, filename: el.name, isFolder: el.isFolder});
         });
+
+        let body = {paths: paths};
+        return this.http.post<any>(`${url}/delete`, body, {headers: headers});
+    }
+
+    update(oldPath: any, currentPath: string) {
+        let headers = new HttpHeaders().set('Content-Type', 'application/json');
+        let paths = [];
+        oldPath.forEach(el => {
+            let newPath = `${currentPath}/${el.name}`;
+            paths.push({oldPath: el.currentPath, currentPath: newPath});
+        });
+        let body = {paths: paths};
+        return this.http.post<any>(`${url}/move`, body, {headers: headers});
+    }
+
+    queryInFolder(folder: any) {
+        const result: FileElement[] = [];
+        let headers = new HttpHeaders().set('Content-Type', 'application/json');
+        let body = {path: folder.currentPath ? folder.currentPath : '/'};
+
+        this.http.post<any>(url, body, {headers: headers}).subscribe((res) => {
+            res.files.forEach(file => {
+                this.map.set(file.currentPath, _.cloneDeep(file));
+                result.push(_.cloneDeep(file));
+            });
+        });
+
         if (!this.querySubject) {
             this.querySubject = new BehaviorSubject(result);
         } else {
@@ -57,12 +78,8 @@ export class FileService {
         return this.querySubject.asObservable();
     }
 
-    get(id: string) {
-        return this.map.get(id);
+    get(currentPath: string) {
+        return this.map.get(currentPath);
     }
-
-    // clone(element: FileElement) {
-    //     return JSON.parse(JSON.stringify(element));
-    // }
 
 }
