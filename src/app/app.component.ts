@@ -30,12 +30,13 @@ export class AppComponent implements OnInit {
             parent: 'root',
             oldParent: '',
             currentPath: '/',
-            oldPath: ''
+            oldPath: '',
+            mimetype: 'txt'
         });
-        this.fileService.add({name: 'Folder B', isFolder: true, parent: 'root', oldParent: '', currentPath: '/', oldPath: '/'});
-        this.fileService.add({name: 'Folder C', isFolder: true, parent: folderA.id, oldParent: '', currentPath: 'Folder A', oldPath: '/'});
-        this.fileService.add({name: 'File A', isFolder: false, parent: 'root', oldParent: '', currentPath: '/', oldPath: '/'});
-        this.fileService.add({name: 'File B', isFolder: false, parent: 'root', oldParent: '', currentPath: '/', oldPath: '/'});
+        this.fileService.add({name: 'Folder B', isFolder: true, parent: 'root', oldParent: '', currentPath: '/', oldPath: '/', mimetype: 'txt'});
+        this.fileService.add({name: 'Folder C', isFolder: true, parent: folderA.id, oldParent: '', currentPath: 'Folder A', oldPath: '/', mimetype: 'txt'});
+        this.fileService.add({name: 'File A', isFolder: false, parent: 'root', oldParent: '', currentPath: '/', oldPath: '/', mimetype: 'txt'});
+        this.fileService.add({name: 'File B', isFolder: false, parent: 'root', oldParent: '', currentPath: '/', oldPath: '/', mimetype: 'txt'});
 
         this.updateFileElementQuery();
     }
@@ -47,7 +48,8 @@ export class AppComponent implements OnInit {
             parent: this.currentRoot ? this.currentRoot.id : 'root',
             oldParent: '',
             currentPath: this.currentPath,
-            oldPath: ''
+            oldPath: '',
+            mimetype: 'txt'
         });
         this.updateFileElementQuery();
     }

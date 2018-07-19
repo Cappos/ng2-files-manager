@@ -6,4 +6,5 @@ export class FileElement {
     oldParent: string;
     currentPath: string;
     oldPath: string;
+    mimetype: string;
 }
