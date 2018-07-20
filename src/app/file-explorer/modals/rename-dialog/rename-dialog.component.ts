@@ -1,16 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA} from '@angular/material';
 
 @Component({
-  selector: 'app-rename-dialog',
-  templateUrl: './rename-dialog.component.html',
-  styleUrls: ['./rename-dialog.component.css']
+    selector: 'app-rename-dialog',
+    templateUrl: './rename-dialog.component.html',
+    styleUrls: ['./rename-dialog.component.css']
 })
 export class RenameDialogComponent implements OnInit {
     folderName: string;
+    folderOldName: string;
 
-  constructor() { }
+    constructor(@Inject(MAT_DIALOG_DATA) private data: any) {
 
-  ngOnInit() {
-  }
+    }
+
+    ngOnInit() {
+        this.folderName = this.data.element.orginalName;
+    }
 
 }

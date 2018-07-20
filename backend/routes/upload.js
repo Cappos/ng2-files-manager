@@ -40,15 +40,17 @@ router.post('/', function (req, res, next) {
         let name = filename.substr(filename.lastIndexOf('\\') + 1).split('.')[0];
         let extension = filename.substr(filename.lastIndexOf('\\') + 1).split('.')[1];
         let dir = req.body.dir;
+
         let srcpath = `./temp/${filename}`;
-        let dstpath = `upload/${dir}/${filename}`;
+        let dstpath = dir === '/' ? path.join('upload', filename.replace(/\/$/, "")) : path.join('upload', dir.replace(/\/$/, ""), filename.replace(/\/$/, ""));
+        let destination = dir === '/' ? `upload` : path.join('upload', dir.replace(/\/$/, ""));
 
         fs.pathExists(dstpath, (err, exists) => {
             if (exists) {
-                File.find({originalname: fileData.originalname}).then(res => {
+                File.find({originalname: fileData.originalname, deleted: false}).then(res => {
                     let fileCount = `(copy ${res.length})`;
                     filename = name + ' ' + fileCount + '.' + extension;
-                    let destination = `upload/${dir}/${filename}`;
+                    let destination = path.join('upload', dir.replace(/\/$/, ""), filename.replace(/\/$/, ""));
                     fs.move(srcpath, destination, err => {
                         if (err) return console.error(err);
                         console.log('success!')
@@ -61,26 +63,25 @@ router.post('/', function (req, res, next) {
                     console.log('success!')
                 });
             }
+
+            let file = new File({
+                destination: destination,
+                encoding: fileData.encoding,
+                fieldname: fileData.fieldname,
+                filename: filename,
+                mimetype: fileData.mimetype,
+                originalname: fileData.originalname,
+                path: dstpath,
+                oldPath: oldPath,
+                parentId: parentId,
+                oldParentId: oldParentId,
+                size: fileData.size,
+                isFolder: false
+            }).save(file => file);
+
+            res.send(req.files);
         });
-
-        let file = new File({
-            destination: `upload/${dir}`,
-            encoding: fileData.encoding,
-            fieldname: fileData.fieldname,
-            filename: filename,
-            mimetype: fileData.mimetype,
-            originalname: fileData.originalname,
-            path: dstpath,
-            oldPath: oldPath,
-            parentId: parentId,
-            oldParentId: oldParentId,
-            size: fileData.size,
-            isFolder: false
-        }).save(file => file);
-
-        res.send(req.files);
     });
-
 });
 
 module.exports = router;

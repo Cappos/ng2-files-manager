@@ -24,66 +24,18 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
-        const folderA = this.fileService.add({
-            name: 'Folder A',
-            isFolder: true,
-            parent: 'root',
-            oldParent: '',
-            currentPath: '/',
-            oldPath: '',
-            mimetype: 'txt'
-        });
-        this.fileService.add({
-            name: 'Folder B',
-            isFolder: true,
-            parent: 'root',
-            oldParent: '',
-            currentPath: '/',
-            oldPath: '/',
-            mimetype: 'txt'
-        });
-        this.fileService.add({
-            name: 'Folder C',
-            isFolder: true,
-            parent: folderA.id,
-            oldParent: '',
-            currentPath: 'Folder A',
-            oldPath: '/',
-            mimetype: 'txt'
-        });
-        this.fileService.add({
-            name: 'File A',
-            isFolder: false,
-            parent: 'root',
-            oldParent: '',
-            currentPath: '/',
-            oldPath: '/',
-            mimetype: 'txt'
-        });
-        this.fileService.add({
-            name: 'File B',
-            isFolder: false,
-            parent: 'root',
-            oldParent: '',
-            currentPath: '/',
-            oldPath: '/',
-            mimetype: 'txt'
-        });
-
         this.updateFileElementQuery();
     }
 
     addFolder(folder: { name: string }) {
-        this.fileService.add({
+        const newFolder = {
             isFolder: true,
             name: folder.name,
-            parent: this.currentRoot ? this.currentRoot.id : 'root',
-            oldParent: '',
-            currentPath: this.currentPath,
-            oldPath: '',
-            mimetype: 'txt'
-        });
-        this.updateFileElementQuery();
+            parent: this.currentRoot ? this.currentRoot.currentPath : ''
+        };
+        this.fileService.add(newFolder).subscribe(res => {
+            this.updateFileElementQuery();
+        })
     }
 
     addFile(file) {
@@ -98,22 +50,19 @@ export class AppComponent implements OnInit {
         });
     }
 
-    // moveElement(event: { element: FileElement; moveTo: FileElement }) {
-    //     this.fileService.update(event.element.currentPath, {parent: event.moveTo.currentPath});
-    //     this.updateFileElementQuery();
-    // }
-
-    // renameElement(element: FileElement) {
-    //     this.fileService.update(element.currentPath, {name: element.name});
-    //     this.updateFileElementQuery();
-    // }
+    renameElement(element: FileElement) {
+        let name = `${element.name}.${element.extension}`;
+        this.fileService.rename(element.currentPath, name, element.parent, element.isFolder).subscribe(res => {
+            this.updateFileElementQuery();
+        });
+    }
 
     updateFileElementQuery() {
         this.fileElements = this.fileService.queryInFolder(this.currentRoot ? this.currentRoot : 'root');
     }
 
     navigateUp() {
-        if (this.currentRoot && this.currentRoot.parent === 'root') {
+        if (this.currentRoot && this.currentRoot.parent === '') {
             this.currentRoot = null;
             this.canNavigateUp = false;
             this.updateFileElementQuery();

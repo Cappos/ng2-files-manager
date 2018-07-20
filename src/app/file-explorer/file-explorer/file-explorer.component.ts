@@ -75,7 +75,11 @@ export class FileExplorerComponent implements OnInit {
     }
 
     openRenameDialog(element: FileElement) {
-        const dialogRef = this.dialog.open(RenameDialogComponent);
+        const dialogRef = this.dialog.open(RenameDialogComponent, {
+            data: {
+                element: element
+            }
+        });
         dialogRef.afterClosed().subscribe(res => {
             if (res) {
                 element.name = res;
@@ -140,9 +144,9 @@ export class FileExplorerComponent implements OnInit {
     }
 
     isCut(item: any) {
-        const {id, isFolder, parent} = item;
+        const {currentPath, isFolder, parent} = item;
         return this.cuted
-            .filter((cutedItem) => cutedItem.id == id && cutedItem.isFolder == isFolder && cutedItem.parent == parent).length;
+            .filter((cutedItem) => cutedItem.currentPath == currentPath && cutedItem.isFolder == isFolder && cutedItem.parent == parent).length;
     }
 
     onPaste() {
