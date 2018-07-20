@@ -2,19 +2,17 @@ const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs-extra');
 const multer = require('multer');
 const File = mongoose.model('file');
 
 
 /** API path that will upload the files */
 router.post('/', function (req, res, next) {
-
     // File upload
     let storage = multer.diskStorage({ //multers disk storage settings
-
         destination: function (req, file, cb) {
-            cb(null, './upload/');
+            cb(null, './temp/');
         },
         filename: function (req, file, cb) {
             let datetimestamp = Date.now();
@@ -29,34 +27,58 @@ router.post('/', function (req, res, next) {
 
     let oldPath = '';
     let parentId = '';
-    let oldParentId= '';
+    let oldParentId = '';
+    let filename = '';
 
     upload(req, res, function (err) {
         if (err) {
             res.json({error_code: 1, err_desc: err});
             return;
         }
-
-        let dir = req.body;
-        console.log(dir);
         let fileData = req.files[0];
+        filename = fileData.filename;
+        let name = filename.substr(filename.lastIndexOf('\\') + 1).split('.')[0];
+        let extension = filename.substr(filename.lastIndexOf('\\') + 1).split('.')[1];
+        let dir = req.body.dir;
+        let srcpath = `./temp/${filename}`;
+        let dstpath = `upload/${dir}/${filename}`;
 
-        // let file =  new File({
-        //     destination: fileData.destination,
-        //     encoding: fileData.encoding,
-        //     fieldname: fileData.fieldname,
-        //     filename: fileData.filename,
-        //     mimetype: fileData.mimetype,
-        //     originalname: fileData.originalname,
-        //     path: fileData.path,
-        //     oldPath: oldPath,
-        //     parentId: parentId,
-        //     oldParentId: oldParentId,
-        //     size: fileData.size,
-        //     isFolder: false
-        // }).save(file => file);
+        fs.pathExists(dstpath, (err, exists) => {
+            if (exists) {
+                File.find({originalname: fileData.originalname}).then(res => {
+                    let fileCount = `(copy ${res.length})`;
+                    filename = name + ' ' + fileCount + '.' + extension;
+                    let destination = `upload/${dir}/${filename}`;
+                    fs.move(srcpath, destination, err => {
+                        if (err) return console.error(err);
+                        console.log('success!')
+                    });
+                });
+            }
+            else {
+                fs.move(srcpath, dstpath, err => {
+                    if (err) return console.error(err);
+                    console.log('success!')
+                });
+            }
+        });
 
-        // res.send(req.files);
+        let file = new File({
+            destination: `upload/${dir}`,
+            encoding: fileData.encoding,
+            fieldname: fileData.fieldname,
+            filename: filename,
+            mimetype: fileData.mimetype,
+            originalname: fileData.originalname,
+            path: dstpath,
+            oldPath: oldPath,
+            parentId: parentId,
+            oldParentId: oldParentId,
+            size: fileData.size,
+            isFolder: false
+        }).save(file => file);
+
+        res.send(req.files);
     });
 
 });

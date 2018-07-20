@@ -10,7 +10,7 @@ import {forkJoin} from 'rxjs';
     styleUrls: ['./upload-dialog.component.css']
 })
 
-export class UploadDialogComponent implements OnInit{
+export class UploadDialogComponent implements OnInit {
     @ViewChild('file') file;
     public files: Set<File> = new Set();
     progress;
@@ -20,13 +20,16 @@ export class UploadDialogComponent implements OnInit{
     uploading = false;
     uploadSuccessful = false;
     fileTypes: string;
+    dir: string;
 
-    constructor(public dialogRef: MatDialogRef<UploadDialogComponent>, public uploadService: UploadService, @Inject(MAT_DIALOG_DATA) private data: any) {}
+    constructor(public dialogRef: MatDialogRef<UploadDialogComponent>, public uploadService: UploadService, @Inject(MAT_DIALOG_DATA) private data: any) {
+    }
 
 
-    ngOnInit(){
-        if(this.data){
+    ngOnInit() {
+        if (this.data) {
             this.fileTypes = this.data.fileType;
+            this.dir = this.data.dir;
         }
     }
 
@@ -53,7 +56,7 @@ export class UploadDialogComponent implements OnInit{
         this.uploading = true;
 
         // start the upload and save the progress map
-        this.progress = this.uploadService.upload(this.files);
+        this.progress = this.uploadService.upload(this.files, this.dir);
 
         // convert the progress map into an array
         let allProgressObservables = [];
