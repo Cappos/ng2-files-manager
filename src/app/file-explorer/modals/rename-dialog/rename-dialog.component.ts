@@ -15,7 +15,7 @@ export class RenameDialogComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.folderName = this.data.element.orginalName;
+        this.folderName = this.data.element.orginalName ? this.data.element.orginalName : this.data.element.name;
     }
 
 }

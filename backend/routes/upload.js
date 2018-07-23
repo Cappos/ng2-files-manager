@@ -45,6 +45,7 @@ router.post('/', function (req, res, next) {
         let dstpath = dir === '/' ? path.join('upload', filename.replace(/\/$/, "")) : path.join('upload', dir.replace(/\/$/, ""), filename.replace(/\/$/, ""));
         let destination = dir === '/' ? `upload` : path.join('upload', dir.replace(/\/$/, ""));
 
+        // check if file with same name exist
         fs.pathExists(dstpath, (err, exists) => {
             if (exists) {
                 File.find({originalname: fileData.originalname, deleted: false}).then(res => {

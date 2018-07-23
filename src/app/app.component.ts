@@ -51,7 +51,7 @@ export class AppComponent implements OnInit {
     }
 
     renameElement(element: FileElement) {
-        let name = `${element.name}.${element.extension}`;
+        let name = element.isFolder ? element.name : `${element.name}.${element.extension}`;
         this.fileService.rename(element.currentPath, name, element.parent, element.isFolder).subscribe(res => {
             this.updateFileElementQuery();
         });
