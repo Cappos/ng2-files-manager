@@ -97,7 +97,7 @@ router.post('/move', function (req, res, next) {
                 if (err) return console.error(err);
 
                 if (item.isFolder) {
-                    // Todo make recursive file move
+                    // Todo make recursive file move database update
                     const folderContent = walkSync(dstpath);
                     folderContent.forEach(file => {
                         File.findOneAndUpdate({filename: file.name}, {
