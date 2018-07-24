@@ -52,8 +52,11 @@ export class FileService {
 
     update(oldPath: any, currentPath: string) {
         let paths = [];
+
         oldPath.forEach(el => {
-            let newPath = `${currentPath}/${el.name}`;
+            console.log(currentPath);
+            console.log(el.name);
+            let newPath = `${currentPath}${el.name}`;
             paths.push({oldPath: el.currentPath, currentPath: newPath, isFolder: el.isFolder});
         });
         let body = {paths: paths};

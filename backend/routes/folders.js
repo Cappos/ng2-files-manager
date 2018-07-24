@@ -21,9 +21,13 @@ router.post('/', function (req, res, next) {
 /** API path that will create folder */
 router.post('/create', function (req, res, next) {
     const dir = req.body.dir.parent === '' ? path.join('upload', req.body.dir.parent, req.body.dir.name) : path.join(req.body.dir.parent, req.body.dir.name);
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir);
+
+    if (fs.existsSync(dir)) {
+        return res.status(200).json({
+            message: 'Folder with same name exists'
+        });
     }
+    fs.mkdirSync(dir);
     res.status(200).json({
         message: 'Directory successfully created',
         files: dir
@@ -35,24 +39,43 @@ router.post('/rename', function (req, res, next) {
     let oldPath = req.body.oldPath;
     let newPath = req.body.parent === '' ? path.join('upload', req.body.newName) : path.join(req.body.parent, req.body.newName);
 
-    fs.rename(oldPath, newPath, function (err) {
-        if (err) throw err;
-        fs.stat(newPath, function (err, stats) {
-            if (err) throw err;
+    fs.pathExists(newPath, (err, exists) => {
+        if (exists) {
+            return res.status(200).json({
+                message: 'File with same name exists'
+            });
+        }
 
-            if(req.body.isFolder){
-                const folderContent = walkSync(newPath);
-                folderContent.forEach(file => {
-                    File.findOneAndUpdate({filename: file.name}, {$set: {destination: newPath, path: path.join(newPath, file.name)}}, {new: true}).then(res =>res);
-                })
-            }
-            else {
-                File.findOneAndUpdate({path: oldPath}, {$set: {filename: req.body.newName, originalname: req.body.newName, path: newPath}}, {new: true}).then(res =>res);
-            }
+        fs.rename(oldPath, newPath, function (err) {
+            if (err) throw err;
+            fs.stat(newPath, function (err, stats) {
+                if (err) throw err;
+
+                if (req.body.isFolder) {
+                    const folderContent = walkSync(newPath);
+                    folderContent.forEach(file => {
+                        File.findOneAndUpdate({filename: file.name}, {
+                            $set: {
+                                destination: newPath,
+                                path: path.join(newPath, file.name)
+                            }
+                        }, {new: true}).then(res => res);
+                    })
+                }
+                else {
+                    File.findOneAndUpdate({path: oldPath}, {
+                        $set: {
+                            filename: req.body.newName,
+                            originalname: req.body.newName,
+                            path: newPath
+                        }
+                    }, {new: true}).then(res => res);
+                }
+            });
         });
-    });
-    res.status(200).json({
-        message: 'Directory successfully created'
+        res.status(200).json({
+            message: 'Directory successfully created'
+        });
     });
 });
 
@@ -63,22 +86,35 @@ router.post('/move', function (req, res, next) {
     data.forEach(item => {
         let srcpath = `${item.oldPath}`;
         let dstpath = path.join('upload', item.currentPath);
-        fs.move(srcpath, dstpath, err => {
-            if (err) return console.error(err);
 
-            if(item.isFolder){
-                const folderContent = walkSync(dstpath);
-                folderContent.forEach(file => {
-                    File.findOneAndUpdate({filename: file.name}, {$set: {destination: dstpath, path: path.join(dstpath, file.name)}}, {new: true}).then(res =>res);
-                })
+        fs.pathExists(dstpath, (err, exists) => {
+            if (exists) {
+                return res.status(200).json({
+                    message: 'File with same name exists'
+                });
             }
-            console.log('success!');
+            fs.moveSync(srcpath, dstpath, err => {
+                if (err) return console.error(err);
+
+                if (item.isFolder) {
+                    // Todo make recursive file move
+                    const folderContent = walkSync(dstpath);
+                    folderContent.forEach(file => {
+                        File.findOneAndUpdate({filename: file.name}, {
+                            $set: {
+                                destination: dstpath,
+                                path: path.join(dstpath, file.name)
+                            }
+                        }, {new: true}).then(res => res);
+                    })
+                }
+                console.log('success!');
+            });
+
+            res.status(200).json({
+                message: 'File moved'
+            });
         });
-    });
-
-
-    res.status(200).json({
-        message: 'Directory successfully created'
     });
 });
 
@@ -98,7 +134,10 @@ router.post('/delete', function (req, res, next) {
         else {
             fs.unlink(filepath, (err) => {
                 if (err) throw err;
-                File.findOneAndUpdate({path: filepath, deleted: false}, {$set: {deleted: true}}, {new: true}).then(res => res);
+                File.findOneAndUpdate({
+                    path: filepath,
+                    deleted: false
+                }, {$set: {deleted: true}}, {new: true}).then(res => res);
                 console.log('successfully deleted');
             });
         }
@@ -137,7 +176,6 @@ const walkSync = (dir, filelist = []) => {
     });
     return filelist;
 };
-
 
 
 module.exports = router;
