@@ -59,7 +59,7 @@ router.post('/', function (req, res, next) {
                 });
             }
             else {
-                fs.move(srcpath, dstpath, err => {
+                fs.moveSync(srcpath, dstpath, err => {
                     if (err) return console.error(err);
                     console.log('success!')
                 });
