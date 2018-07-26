@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FileElement} from '../model/file-element';
 import {MatDialog, MatMenuTrigger} from '@angular/material';
 import {NewFolderDialogComponent} from '../modals/new-folder-dialog/new-folder-dialog.component';
@@ -7,7 +7,7 @@ import {RenameDialogComponent} from '../modals/rename-dialog/rename-dialog.compo
 @Component({
     selector: 'app-file-explorer',
     templateUrl: './file-explorer.component.html',
-    styleUrls: ['./file-explorer.component.css']
+    styleUrls: ['./file-explorer.component.css'],
 })
 export class FileExplorerComponent implements OnInit {
 
@@ -30,6 +30,8 @@ export class FileExplorerComponent implements OnInit {
 
     selection: any = [];
     cuted: any = [];
+
+    enabled = true;
 
 
     constructor(public dialog: MatDialog) {
@@ -180,4 +182,8 @@ export class FileExplorerComponent implements OnInit {
         return ele;
     };
 
+    offSelect(event) {
+        console.log('outside', event);
+        this.selection = [];
+    }
 }

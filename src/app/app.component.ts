@@ -108,9 +108,9 @@ export class AppComponent implements OnInit {
 
     onPaste(ev: any) {
         let currentPath = this.currentPath.replace(/\s/g, '\\ ');
-        console.log(this.currentPath);
         this.fileService.update(ev, this.currentPath).subscribe((res) => {
             this.updateFileElementQuery();
+            this.selected = [];
         });
     }
 }

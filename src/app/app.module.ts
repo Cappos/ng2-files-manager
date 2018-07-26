@@ -13,7 +13,7 @@ import {UploadModule} from './upload/upload.module';
 
 @NgModule({
     declarations: [
-        AppComponent
+        AppComponent,
     ],
     imports: [
         BrowserModule,

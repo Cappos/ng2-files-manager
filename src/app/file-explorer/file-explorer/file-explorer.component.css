@@ -16,6 +16,7 @@
 }
 
 .file-or-folder-icon {
+    color:#ffbc10;
     width: 50px;
     height: 50px;
     font-size: 50px;
@@ -23,6 +24,7 @@
 
 .content {
     min-height: 50vh;
+    position: relative;
 }
 .pointer {
     cursor: pointer;
@@ -33,9 +35,18 @@
 }
 
 .bgc-gray mat-icon {
-    color: #7a7a7b;
+    color: #c7c7c7;
 }
 
 .bgc-cut mat-icon{
     color: #eeeeee;
+}
+
+.wrapper {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 0;
 }

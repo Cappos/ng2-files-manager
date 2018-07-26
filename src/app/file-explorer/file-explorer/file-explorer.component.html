@@ -1,4 +1,5 @@
-<mat-toolbar>
+
+<mat-toolbar color="primary">
     <mat-icon *ngIf="canNavigateUp" class="pointer" (click)="navigateUp()">
         arrow_back
     </mat-icon>
@@ -21,44 +22,44 @@
         <mat-icon>more_vert</mat-icon>
     </button>
 </mat-toolbar>
+<mat-card>
+    <mat-card-content>
 
-<div class="container" fxFlex fxLayout="row" fxLayoutAlign="space-between stretch">
-    <div class="content" fxFlex fxLayout="row" (contextmenu)="openContextMenu($event, menuContextTrigger)">
-          <span [matMenuTriggerFor]="containerContext"
-                #menuContextTrigger="matMenuTrigger">
+        <div class="container" fxFlex fxLayout="row" fxLayoutAlign="space-between stretch">
+            <div class="content" fxFlex fxLayout="row" (contextmenu)="openContextMenu($event, menuContextTrigger)">
+                <span [matMenuTriggerFor]="containerContext"
+                      #menuContextTrigger="matMenuTrigger">
                 </span>
-        <mat-grid-list cols="8" rowHeight="100px" fxFlex>
-            <mat-grid-tile *ngFor="let element of fileElements" class=file-or-folder>
+                <div class="wrapper" (click)="offSelect($event)"></div>
+                <mat-grid-list cols="8" rowHeight="100px" fxFlex >
+                    <mat-grid-tile *ngFor="let element of fileElements" class=file-or-folder>
 
                 <span [matMenuTriggerFor]="rootMenu"
                       [matMenuTriggerData]="{element: element}"
                       #menuTrigger="matMenuTrigger">
                 </span>
+                        <div fxLayout="column"
+                             fxLayoutAlign="space-between center"
+                             [ngClass]="{ 'bgc-gray': isSelected(element) > -1, 'bgc-cut': isCut(element)}"
+                             (dblclick)="navigate(element)"
+                             (click)="onSelect($event, element)"
+                             (contextmenu)="openMenu($event, element, menuTrigger)">
+                            <mat-icon class="file-or-folder-icon pointer" *ngIf="element.isFolder">
+                                folder
+                            </mat-icon>
+                            <mat-icon class="file-or-folder-icon pointer" *ngIf="!element.isFolder">
+                                insert_drive_file
+                            </mat-icon>
 
-                <div fxLayout="column"
-                     fxLayoutAlign="space-between center"
-                     [ngClass]="{ 'bgc-gray': isSelected(element) > -1, 'bgc-cut': isCut(element)}"
-                     (dblclick)="navigate(element)"
-                     (click)="onSelect($event, element)"
-                     (contextmenu)="openMenu($event, element, menuTrigger)">
+                            <span class="mat-subheader">{{element.name}}</span>
+                        </div>
+                    </mat-grid-tile>
+                </mat-grid-list>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>
 
-                    <mat-icon color="primary"
-                              class="file-or-folder-icon pointer"
-                              *ngIf="element.isFolder">
-                        folder
-                    </mat-icon>
-                    <mat-icon color="primary"
-                              class="file-or-folder-icon pointer"
-                              *ngIf="!element.isFolder">
-                        insert_drive_file
-                    </mat-icon>
-
-                    <span>{{element.name}}</span>
-                </div>
-            </mat-grid-tile>
-        </mat-grid-list>
-    </div>
-</div>
 
 
 <mat-menu #containerContext="matMenu" xPosition="after">
